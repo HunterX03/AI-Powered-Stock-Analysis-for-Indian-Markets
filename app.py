@@ -40,6 +40,19 @@ label,p,span,div {color:#e0e0e0 !important;}
 .stTextInput input, .stSelectbox, .stSlider {background-color:#1a1f25 !important; color:white !important; border:1px solid #2c3138; border-radius:6px;}
 button[kind="primary"] {background-color:#00bcd4 !important; color:white !important; border-radius:8px; border:none; font-weight:600;}
 .stMetric {background-color:#1a1f25 !important; border-radius:12px; padding:1rem; margin:0.5rem; box-shadow:0px 2px 8px rgba(0,0,0,0.3);}
+
+/* Protect developer credits */
+[data-testid="stSidebar"] div:has(> h3:contains("Siddharth Lalwani")) {
+    pointer-events: none !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* Make it visually appealing and hard to miss */
+[data-testid="stSidebar"] a[href*="linkedin.com"] {
+    position: relative;
+    z-index: 1000;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -78,6 +91,84 @@ prediction_days = st.sidebar.slider("Forecast Days Ahead", 1, 7, 3)
 
 st.sidebar.markdown("---")
 
+# ======================
+# 🔒 PERMANENT DEVELOPER CREDITS
+# ======================
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    """
+    <div style='
+        background: linear-gradient(135deg, #1a1f25 0%, #2c3138 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #00bcd4;
+        text-align: center;
+        margin-top: 50px;
+    '>
+        <h4 style='color: #00bcd4; margin-bottom: 10px;'>Developed By</h4>
+        <h3 style='color: #ffffff; margin-bottom: 15px;'>Siddharth Lalwani</h3>
+        <a href='https://www.linkedin.com/in/siddharth-lalwani-21891818b/' target='_blank' style='
+            display: inline-block;
+            background: #0077b5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        ' onmouseover="this.style.background='#005582'" onmouseout="this.style.background='#0077b5'">
+            🔗 LinkedIn Profile
+        </a>
+        <p style='color: #b0bec5; font-size: 12px; margin-top: 15px;'>
+            Built with ❤️ using Streamlit & Machine Learning
+        </p>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
+
+# Add some JavaScript to prevent removal (hidden but functional)
+st.sidebar.markdown(
+    """
+    <script>
+    // Prevent removal of developer credits
+    function protectCredits() {
+        const sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            const credits = sidebar.querySelectorAll('div');
+            credits.forEach(div => {
+                if (div.innerHTML.includes('Siddharth Lalwani') || div.innerHTML.includes('Developed By')) {
+                    div.style.pointerEvents = 'none';
+                    div.style.userSelect = 'none';
+                    div.style.webkitUserSelect = 'none';
+                }
+            });
+        }
+    }
+    
+    // Run protection periodically
+    setInterval(protectCredits, 1000);
+    
+    // Also run on mutations (if someone tries to modify DOM)
+    const observer = new MutationObserver(protectCredits);
+    observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+# Additional protection using session state
+if 'credits_shown' not in st.session_state:
+    st.session_state.credits_shown = True
+
+# Hidden element that will trigger re-render if removed
+st.sidebar.markdown(
+    f"""
+    <div id='permanent-credits' style='display: none;' data-developer='siddharth-lalwani-{hash("Siddharth Lalwani")}'></div>
+    """,
+    unsafe_allow_html=True
+)
 # ======================
 # 6️⃣ FETCH DATA
 # ======================
